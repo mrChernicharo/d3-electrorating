@@ -9,14 +9,23 @@ let formatedData,
 	selectedProp = 'year',
 	selectedYear = 2020,
 	interval,
-	width,
-	height,
-	margins,
+	svg,
+	x,
+	y,
+	xAxis,
+	xAxisCall,
+	yAxis,
+	yAxisCall;
 
-const [playBtn, pauseBtn, resetBtn] = [
+let margins = { top: 100, left: window.innerWidth / 20 };
+let width = window.innerWidth - margins.left * 2;
+let height = window.innerHeight - margins.top * 2;
+
+const [playBtn, pauseBtn, resetBtn, yearDisplay] = [
 	$('button#play'),
 	$('button#pause'),
 	$('button#reset'),
+	$('#year-display'),
 ];
 
 playBtn.on('click', e => {
@@ -34,13 +43,6 @@ resetBtn.on('click', e => {
 	reset();
 });
 
-d3.dsv(';', '../electrorating_indicadores_financieros.csv').then(data => {
-	console.log(data);
-	rawData = data;
-	wrangleData(rawData);
-	update();
-});
-
 function play() {
 	interval = setInterval(() => {
 		selectedYear = selectedYear === 2020 ? 2000 : selectedYear + 1;
@@ -54,59 +56,69 @@ function pause() {
 }
 
 function reset() {
-	selectedYear = 2020;
+	selectedYear = 2000;
+	wrangleData(rawData);
+	update();
 }
 
-function update() {
-	setDims();
-	console.log(selectedYear, chartData);
+(async function init() {
+	// prettier-ignore
+	const data = await d3.dsv(';', '../electrorating_indicadores_financieros.csv');
+	console.log(data);
+	rawData = data;
 
-	const svg = d3
+	wrangleData(rawData);
+
+	// scales
+
+	y = d3.scaleLinear().range([height, 0]);
+
+	svg = d3
 		.select('svg')
 		.attr('width', width)
 		.attr('height', height)
 		.attr('transform', `translate(${margins.left}, 0)`);
 
-	const g = svg
-		.append('g')
-		.attr('transform', `translate(${margins.left}, 0)`);
+	g = svg.append('g').attr('transform', `translate(${margins.left}, 0)`);
 
-	// scales
-	const x = d3.scaleTime().range([margins.left, width - margins.left * 2]);
-	const y = d3.scaleLinear().range([height, 0]);
+	xAxisCall = d3.axisBottom().tickFormat(format);
 
-	// axis generators
-	const xAxisCall = d3.axisBottom();
-	const yAxisCall = d3
-		.axisLeft()
-		.ticks(6)
-		.tickFormat(d => `${parseInt(d / 1000)}k`);
-
+	x = d3.scaleLinear();
 	// axis groups
-	const xAxis = g
-		.append('g')
+	xAxis = g
+		.join('g')
 		.attr('class', 'x axis')
 		.attr('transform', `translate(0, ${height - 40})`);
 
-	const yAxis = g.append('g').attr('class', 'y axis');
+	update();
+})();
 
-	xAxisCall.scale(x);
-	xAxis.transition().call(xAxisCall);
-	// yAxisCall.scale(y)
-	// yAxis.transition(t).call(yAxisCall.tickFormat(formatAbbreviation))
+function update() {
+	yearDisplay.text(selectedYear);
+	setDims();
 
-	// const x = d3
-	// 	.scaleLinear()
-	// 	.domain(d3.extent(chartData, d => d.value))
-	// 	.range([0, width]);
+	console.log(selectedYear, chartData);
 
-	// const xAxisCall = d3.axisBottom().call(xAxisG);
+	svg.attr('width', width).attr('height', height);
+	g.attr('width', width).attr('height', height);
+
+	// prettier-ignore
+	x
+		.range([margins.left, width - margins.left * 2])
+		.domain(d3.extent(chartData, d => d.value ));
+
+	xAxisCall.scale(x).ticks(width > 700 ? 10 : width > 500 ? 7 : 4);
+
+	xAxis
+		.transition()
+		.attr('transform', `translate(0, ${height - 40})`)
+		.call(xAxisCall);
 }
 
 function dataFormat(data) {
 	return data.map(item => ({
-		value: Number(item['FACT_INDICATOR_Value_USD']),
-		localValue: Number(item['FACT_INDICATOR_Value_Local']),
+		value: Number(item['FACT_INDICATOR_Value_USD'] * 0.001),
+		localValue: Number(item['FACT_INDICATOR_Value_Local'] * 0.001),
 		year: Number(item['TIME_Year']),
 		country: item['UTILITY_Country'],
 		company: item['UTILITY_Name'],
@@ -124,7 +136,17 @@ function reduceBy(key, data) {
 }
 
 function format(val) {
-	return d3.format('~s')(val * 1_000_000);
+	return d3.format('.2s')(val);
+}
+function format(x) {
+	const s = d3.format('.2s')(x);
+	switch (s[s.length - 1]) {
+		case 'G':
+			return s.slice(0, -1) + 'B'; // billions
+		case 'k':
+			return s.slice(0, -1) + 'K'; // thousands
+	}
+	return s;
 }
 
 function resize(e) {
