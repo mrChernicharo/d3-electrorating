@@ -19,6 +19,8 @@ svg {
 	overflow: hidden;
 }
 .text-div {
+	/* border: 1px solid blue; */
 	overflow: hidden;
 	white-space: pre-wrap;
+	padding-left: 0.5rem;
 }

@@ -60,7 +60,7 @@ function play() {
 		selectedYear = selectedYear === 2020 ? 2000 : selectedYear + 1;
 		wrangleData(rawData);
 		update();
-	}, 500);
+	}, 2000);
 }
 
 function pause() {
@@ -97,8 +97,8 @@ function reset() {
 		d3
 			.treemap()
 			.size([width, height])
-			.paddingOuter(3)
-			.paddingInner(3)
+			.paddingOuter(1)
+			.paddingInner(1)
 			.paddingTop(d => (d.depth === 1 ? 20 : 0));
 
 	wrangleData(rawData);
@@ -107,8 +107,7 @@ function reset() {
 
 function update() {
 	setDims();
-
-	console.log(selectedYear, chartData);
+	// console.log(selectedYear, chartData);
 
 	svg.attr('width', width).attr('height', height);
 	g.attr('width', width).attr('height', height);
@@ -128,6 +127,8 @@ function update() {
 		.join('div')
 		.attr('class', 'text-div')
 		.style('position', 'absolute')
+		.style('width', d => d.x1 - d.x0 + 'px')
+		.style('height', d => d.y1 - d.y0 + 'px')
 		.transition()
 		.duration(400)
 		.attr('title', d => d.id)
@@ -136,8 +137,11 @@ function update() {
 		.style('width', d => d.x1 - d.x0 + 'px')
 		.style('height', d => d.y1 - d.y0 + 'px')
 		.style('text-align', d => (d.depth === 1 ? 'center' : 'start'))
-		.text(d => {
-			// return d.id;
+		.text(function (d) {
+			// console.log(this);
+			// console.log(this.style.width, d);
+			if (!d.value) return '';
+
 			const txts = {
 				0: '',
 				1: d.id,
@@ -157,6 +161,8 @@ function update() {
 		.attr('class', d => {
 			return d.depth === 1 ? 'node parent' : 'node';
 		})
+		.attr('width', d => d.x1 - d.x0 + 'px')
+		.attr('height', d => d.y1 - d.y0 + 'px')
 		.transition()
 		.duration(400)
 		.attr('title', d => d.id)
@@ -170,7 +176,7 @@ function update() {
 			// return 'lightblue';
 			return colors(d.id);
 
-			d.height;
+			// d.height;
 			// const { r, g, b, opacity } = colors(i);
 			// return `rgb(${r},${g},${b})`;
 		});
@@ -199,7 +205,7 @@ function format(x) {
 }
 
 function setDims() {
-	margins = { top: 100, left: window.innerWidth / 20 };
+	margins = { top: 100, left: 60 };
 	width = window.innerWidth - margins.left * 2;
 	height = window.innerHeight - margins.top * 2;
 
