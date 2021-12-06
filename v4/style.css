@@ -1,0 +1,9 @@
+body {
+	margin: 0;
+}
+#chart-area {
+	margin: 2rem auto;
+}
+svg {
+	border: 1px solid #cdcdcd;
+}
