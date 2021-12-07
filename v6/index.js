@@ -27,13 +27,30 @@ let margins = { top: 100, left: window.innerWidth / 20 };
 let width = window.innerWidth - margins.left * 2;
 let height = window.innerHeight - margins.top * 2;
 
-const [playBtn, pauseBtn, resetBtn, yearDisplay, indicatorSelect] = [
-	$('button#play'),
-	$('button#pause'),
-	$('button#reset'),
-	$('#year-display'),
-	$('select#indicator'),
-];
+const [playBtn, pauseBtn, resetBtn, yearDisplay, indicatorSelect, yearSlider] =
+	[
+		$('button#play'),
+		$('button#pause'),
+		$('button#reset'),
+		$('h1#year-display'),
+		$('select#indicator'),
+		$('#date-slider'),
+	];
+
+// add jQuery UI slider
+yearSlider.slider({
+	range: false,
+	max: 2020,
+	min: 2000,
+	step: 1,
+	slide: (e, ui) => {
+		console.log({ e, ui, v: ui.value });
+		selectedYear = ui.value;
+		wrangleData(rawData);
+		update();
+	},
+	value: selectedYear,
+});
 
 playBtn.on('click', e => {
 	pauseBtn.show();
@@ -59,6 +76,7 @@ indicatorSelect.on('change', e => {
 function play() {
 	interval = setInterval(() => {
 		selectedYear = selectedYear === 2020 ? 2000 : selectedYear + 1;
+		yearSlider.value = selectedYear;
 		wrangleData(rawData);
 		update();
 	}, 2000);
@@ -181,6 +199,7 @@ function update() {
 		});
 	//
 	yearDisplay.text(selectedYear);
+	yearSlider.slider('value', selectedYear);
 }
 
 function reduceBy(key, data) {
@@ -214,8 +233,8 @@ function setDims() {
 
 function wrangleData(data) {
 	formatedData = data.map(item => ({
-		value: Number(item['FACT_INDICATOR_Value_USD'] * 0.001),
-		localValue: Number(item['FACT_INDICATOR_Value_Local'] * 0.001),
+		value: Number(item['FACT_INDICATOR_Value_USD']),
+		localValue: Number(item['FACT_INDICATOR_Value_Local']),
 		year: Number(item['TIME_Year']),
 		country: item['UTILITY_Country'],
 		company: item['UTILITY_Name'],
