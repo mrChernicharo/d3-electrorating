@@ -33,9 +33,11 @@ let formatedData,
 	],
 	colorsInterpol,
 	selectedProp = 'year',
-	selectedYear = 2007,
-	indicator = 'ACTIVOS',
+	selectedYear = 2004,
+	theme = 'All',
+	indicator = 'All',
 	countries,
+	indicators,
 	interval,
 	svg,
 	stratify,
@@ -45,15 +47,11 @@ let margins = { top: 100, left: document.body.innerWidth / 20 };
 let width = document.body.innerWidth - margins.left * 2;
 let height = document.body.innerHeight - margins.top * 2;
 
-const [playBtn, pauseBtn, resetBtn, yearDisplay, indicatorSelect, yearSlider] =
-	[
-		$('button#play'),
-		$('button#pause'),
-		$('button#reset'),
-		$('h1#year-display'),
-		$('select#indicator'),
-		$('#date-slider'),
-	];
+// prettier-ignore
+const [playBtn, pauseBtn, resetBtn, yearDisplay, themeSelect, indicatorSelect,yearSlider] = [
+	$('button#play'), $('button#pause'), $('button#reset'), $('h1#year-display'), 
+	$('select#theme'), $('select#indicator'), $('#date-slider'),
+];
 
 // add jQuery UI slider
 yearSlider.slider({
@@ -83,6 +81,12 @@ pauseBtn.on('click', e => {
 });
 resetBtn.on('click', e => {
 	reset();
+});
+themeSelect.on('change', e => {
+	console.log(e.target.value);
+	theme = e.target.value;
+	wrangleData(rawData);
+	update();
 });
 indicatorSelect.on('change', e => {
 	console.log(e.target.value);
@@ -119,6 +123,15 @@ function reset() {
 	countries = Array.from(
 		new Set([...rawData.map(item => item['UTILITY_Country'])])
 	);
+
+	indicators = Array.from(
+		new Set([...rawData.map(item => item['INDICATOR_Name'])])
+	).forEach(indicator => {
+		d3.select('#indicator')
+			.append('option')
+			.attr('value', indicator)
+			.text(indicator);
+	});
 
 	svg = d3.select('svg');
 
@@ -218,21 +231,11 @@ function update() {
 		.attr('width', d => d.x1 - d.x0 + 'px')
 		.attr('height', d => d.y1 - d.y0 + 'px')
 		.attr('opacity', d => 0.7)
-		.attr('fill', (d, i, e) => {
-			// console.log(d.id);
-			// console.log('parent: ', d.parent.id);
-			return colors[countries.indexOf(d.parent.id) % colors.length];
-			// return 'lightblue';
-			// console.log(countries.indexOf(d.data.country));
-
-			// return colorsInterpol(
-			// 	(countries.indexOf(d.parent.id) + 1) / countries.length
-			// );
-
-			// d.height;
-			// const { r, g, b, opacity } = colors(i);
-			// return `rgb(${r},${g},${b})`;
-		});
+		.attr('fill', (d, i, e) =>
+			d.parent
+				? colors[countries.indexOf(d.parent.id) % colors.length]
+				: '#cdcdcd'
+		);
 	//
 	yearDisplay.text(selectedYear);
 	yearSlider.slider('value', selectedYear);
@@ -260,7 +263,6 @@ function format(x) {
 
 function setDims() {
 	margins = { top: 100, left: window.innerWidth / 20 };
-	// margins = { top: 100, left: 0 };
 	width = window.innerWidth - margins.left * 2;
 	height = window.innerHeight - margins.top * 2;
 
@@ -274,7 +276,8 @@ function wrangleData(data) {
 		year: Number(item['TIME_Year']),
 		country: item['UTILITY_Country'],
 		company: item['UTILITY_Name'],
-		indicator: item['INDICATOR_Theme'],
+		indicator: item['INDICATOR_Name'],
+		theme: item['INDICATOR_Theme'],
 	}));
 
 	dataByYearObj = d3
@@ -282,9 +285,11 @@ function wrangleData(data) {
 		.key(d => d.year)
 		.object(formatedData);
 
-	chartData = dataByYearObj[selectedYear].filter(item =>
-		indicator !== 'All' ? item.indicator === indicator : true
-	);
+	chartData = dataByYearObj[selectedYear]
+		.filter(item => (theme !== 'All' ? item.theme === theme : true))
+		.filter(item =>
+			indicator !== 'All' ? item.indicator === indicator : true
+		);
 
 	allSum = chartData.reduce((acc, item) => (acc += item.value), 0);
 
@@ -305,41 +310,4 @@ function wrangleData(data) {
 		.concat(hierarchyArrs.companies);
 
 	console.log({ chartData, allSum, hierarchyArrs, hierachy, countries });
-
-	// colors = d3.interpolatePiYG;
-	// colorsInterpol = d3.interpolatePuOr;
-	// console.log(colors(0.1), colors(0.2), colors(0.3));
 }
-
-// function getFilteredData(formatedData) {
-// 	const allSum = formatedData.reduce((a, b) => (a += b.value), 0);
-
-// 	const reducedByPropObj = reduceBy(selectedProp, formatedData);
-// 	console.log({ reducedByPropObj });
-
-// 	byPropArr = Object.entries(reducedByPropObj).map(([k, v]) => ({
-// 		id: k,
-// 		value: v,
-// 		parent: 'Root',
-// 	}));
-// 	console.log({ byPropArr });
-
-// 	const companysByPropArr = formatedData.map(company => {
-// 		const parentNode = byPropArr.find(
-// 			node => node.id === String(company[selectedProp])
-// 		);
-// 		return {
-// 			id: company.company,
-// 			value: company.value,
-// 			parent: parentNode.id,
-// 		};
-// 	});
-// 	// items = byProp.map(item => item.id);
-// 	const hierarchy = [{ id: 'Root', parent: '', value: allSum }]
-// 		.concat(byPropArr)
-// 		.concat(companysByPropArr);
-
-// 	console.log({ reducedByPropObj, byPropArr, allSum, hierarchy });
-
-// 	return hierarchy;
-// }
