@@ -1,0 +1,51 @@
+body {
+	margin: 0;
+	font: 10px sans-serif;
+	overflow: hidden;
+}
+section.menu {
+	border: 1px solid #cdcdcd;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0 2rem;
+}
+.container {
+	display: flex;
+	justify-content: center;
+	padding-top: 50px;
+}
+#chart-area {
+	position: relative;
+}
+
+h1#year-display {
+	font-size: 32px;
+	display: inline;
+	margin-left: 2rem;
+}
+
+#slider-div {
+	display: flex;
+	align-items: center;
+}
+
+#date-slider {
+	width: 240px;
+}
+
+svg {
+	border: 1px solid #cdcdcd;
+}
+
+.node {
+	box-sizing: border-box;
+	position: absolute;
+	overflow: hidden;
+}
+.text-div {
+	/* border: 1px solid blue; */
+	overflow: hidden;
+	white-space: pre-wrap;
+	/* padding-left: 0.5rem; */
+}
