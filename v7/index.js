@@ -12,8 +12,26 @@ let formatedData,
 		parents: [],
 		companies: [],
 	},
-	// groupBy,
-	colors,
+	colors = [
+		'cornflowerblue', // 0: "ARGENTINA"
+		'olive', // 1: "BELIZE"
+		'goldenrod', // 2: "COSTA RICA"
+		'mediumseagreen', // 3: "ECUADOR"
+		'lightgreen', // 4: "EL SALVADOR"
+		'forestgreen', // 5: "GUYANA"
+		'indigo', // 6: "JAMAICA"
+		'salmon', // 7: "MEXICO"
+		'blue', // 8: "PANAMA"
+		'tan', // 9: "BOLIVIA"
+		'green', // 10: "BRASIL"
+		'coral', // 11: "PARAGUAY"
+		'peru', // 12: "PERU"
+		'lightcoral', // 13: "REPUBLICA DOMINICANA"
+		'crimson', // 14: "CHILE"
+		'darkorange', // 15: "COLOMBIA"
+		'royalblue', // 16: "URUGUAY"
+	],
+	colorsInterpol,
 	selectedProp = 'year',
 	selectedYear = 2007,
 	indicator = 'ACTIVOS',
@@ -23,9 +41,9 @@ let formatedData,
 	stratify,
 	treemap;
 
-let margins = { top: 100, left: window.innerWidth / 20 };
-let width = window.innerWidth - margins.left * 2;
-let height = window.innerHeight - margins.top * 2;
+let margins = { top: 100, left: document.body.innerWidth / 20 };
+let width = document.body.innerWidth - margins.left * 2;
+let height = document.body.innerHeight - margins.top * 2;
 
 const [playBtn, pauseBtn, resetBtn, yearDisplay, indicatorSelect, yearSlider] =
 	[
@@ -79,7 +97,7 @@ function play() {
 		yearSlider.value = selectedYear;
 		wrangleData(rawData);
 		update();
-	}, 2000);
+	}, 1000);
 }
 
 function pause() {
@@ -98,6 +116,10 @@ function reset() {
 
 	rawData = data;
 
+	countries = Array.from(
+		new Set([...rawData.map(item => item['UTILITY_Country'])])
+	);
+
 	svg = d3.select('svg');
 
 	g = svg.append('g');
@@ -113,7 +135,7 @@ function reset() {
 			.size([width, height])
 			.paddingOuter(1)
 			.paddingInner(1)
-			.paddingTop(d => (d.depth === 1 ? 20 : 0));
+			.paddingTop(d => (d.depth === 1 ? 14 : 0));
 
 	wrangleData(rawData);
 	update();
@@ -154,7 +176,15 @@ function update() {
 		.style('width', d => d.x1 - d.x0 + 'px')
 		.style('height', d => d.y1 - d.y0 + 'px')
 		.style('text-align', d => (d.depth === 1 ? 'center' : 'start'))
-		.text(function (d) {
+		.style('background', d => {
+			if (d.depth === 1) {
+				let c = d3.color(colors[countries.indexOf(d.id)]);
+				c.opacity = 0.4;
+				return c;
+			}
+		})
+		//  colors[countries.indexOf(d.parent.id) % colors.length];
+		.text(d => {
 			// console.log(this);
 			// console.log(this.style.width, d);
 			if (!d.value) return '';
@@ -187,11 +217,17 @@ function update() {
 		.style('y', d => d.y0 + 'px')
 		.attr('width', d => d.x1 - d.x0 + 'px')
 		.attr('height', d => d.y1 - d.y0 + 'px')
-		.attr('opacity', d => d.height + 1 * 0.4)
+		.attr('opacity', d => 0.7)
 		.attr('fill', (d, i, e) => {
-			// console.log(colors(d.id));
+			// console.log(d.id);
+			// console.log('parent: ', d.parent.id);
+			return colors[countries.indexOf(d.parent.id) % colors.length];
 			// return 'lightblue';
-			return colors(d.id);
+			// console.log(countries.indexOf(d.data.country));
+
+			// return colorsInterpol(
+			// 	(countries.indexOf(d.parent.id) + 1) / countries.length
+			// );
 
 			// d.height;
 			// const { r, g, b, opacity } = colors(i);
@@ -250,8 +286,6 @@ function wrangleData(data) {
 		indicator !== 'All' ? item.indicator === indicator : true
 	);
 
-	countries = Array.from(new Set([...chartData.map(item => item.country)]));
-
 	allSum = chartData.reduce((acc, item) => (acc += item.value), 0);
 
 	hierarchyArrs = {
@@ -272,7 +306,9 @@ function wrangleData(data) {
 
 	console.log({ chartData, allSum, hierarchyArrs, hierachy, countries });
 
-	colors = d3.scaleOrdinal(d3.schemeBlues);
+	// colors = d3.interpolatePiYG;
+	// colorsInterpol = d3.interpolatePuOr;
+	// console.log(colors(0.1), colors(0.2), colors(0.3));
 }
 
 // function getFilteredData(formatedData) {

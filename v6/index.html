@@ -14,34 +14,23 @@
 	</head>
 	<body>
 		<section class="menu">
-			<div class="left-menu">
-				<div class="select-box">
-					<label for="tema">Tema</label>
-					<select name="tema" id="indicator">
-						<option selected value="All">Todos</option>
-						<option value="ACTIVOS">ACTIVOS</option>
-						<option value="ACCESO">ACCESO</option>
-						<option value="CAPITAL PROPRIO">CAPITAL PROPRIO</option>
-						<option value="PASIVOS">PASIVOS</option>
-					</select>
-				</div>
-				<!-- <span>&nbsp;&nbsp;&nbsp;&nbsp;</span> -->
-				<button id="reset"><i class="fas fa-fast-backward"></i></button>
-				<!-- <button id="setp-back">
-					<i class="fas fa-step-backward"></i>
-				</button> -->
-				<button id="play"><i class="fas fa-play"></i></button>
-				<button id="pause" hidden><i class="fas fa-pause"></i></button>
-				<!-- <button id="setp-forward">
-					<i class="fas fa-step-forward"></i>
-				</button> -->
-				<!-- <button id="fast-forward">
-					<i class="fas fa-fast-forward"></i>
-				</button> -->
+			<div>
+				<button id="play">Play</button>
+				<button id="pause" hidden>Pause</button>
+				<button id="reset">Reset</button>
+
+				<select id="indicator">
+					<option selected value="All">All</option>
+					<option value="ACTIVOS">ACTIVOS</option>
+					<option value="ACCESO">ACCESO</option>
+					<option value="CAPITAL PROPRIO">CAPITAL PROPRIO</option>
+					<option value="PASIVOS">PASIVOS</option>
+				</select>
 			</div>
+
 			<div id="slider-div">
-				<h1 id="year-display"></h1>
 				<div id="date-slider"></div>
+				<h1 id="year-display"></h1>
 			</div>
 		</section>
 		<div class="container">
@@ -60,10 +49,6 @@
 		<script
 			src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
 			integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
-			crossorigin="anonymous"
-		></script>
-		<script
-			src="https://kit.fontawesome.com/a076d05399.js"
 			crossorigin="anonymous"
 		></script>
 
