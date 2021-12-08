@@ -37,9 +37,18 @@ section.menu {
 	display: flex;
 	flex-direction: column;
 	justify-content: end;
-	width: min(25vmin, 170px);
+	width: min(25vmin, 220px);
 	height: min(8vmin, 36px);
 	margin-right: 1rem;
+}
+
+.btns-box {
+	/* border: 1px solid; */
+	width: 100%;
+	display: flex;
+	justify-content: end;
+	padding-top: 0.5rem;
+	padding-right: 0.5rem;
 }
 
 #slider-div {
@@ -56,13 +65,14 @@ h1#year-display {
 }
 
 #date-slider {
-	width: min(20vmin, 120px);
+	width: min(25vmin, 220px);
 }
 
 #countries-legends {
 	/* border: 1px solid #cdcdcd; */
 	display: flex;
 	flex-wrap: wrap;
+	padding: 1rem 2rem 0;
 }
 
 .legend-container {
@@ -89,7 +99,7 @@ h1#year-display {
 	border-radius: 0.15rem;
 }
 .legend-container.inactive > .legend-btn {
-	background-color: #cdcdcd;
+	background-color: #cdcdcd !important;
 }
 
 .container {
@@ -128,6 +138,12 @@ svg {
 	font-size: 0.9rem;
 }
 
+@media screen and (max-width: 700px) {
+	.btns-box {
+		padding-top: 0;
+		padding-right: 0;
+	}
+}
 @media screen and (max-width: 526px) {
 	body {
 		width: 100%;

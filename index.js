@@ -16,6 +16,7 @@ let formatedData,
 	indicator = 'ACTIVOS CORRIENTES',
 	allCountries,
 	currentCountries,
+	inactiveCountries = [],
 	allIndicators,
 	interval,
 	time = 2000,
@@ -36,7 +37,7 @@ $('#date-slider').slider({
 	slide: (e, ui) => {
 		// console.log({ e, ui, v: ui.value });
 		selectedYear = ui.value;
-		currentCountries = allCountries;
+		resetLegends();
 		wrangleData(rawData);
 		update();
 	},
@@ -49,7 +50,6 @@ $('button#play').on('click', e => {
 	play();
 });
 $('button#pause').on('click', e => {
-	// console.log(e);
 	$('button#pause').hide();
 	$('button#play').show();
 	pause();
@@ -57,47 +57,29 @@ $('button#pause').on('click', e => {
 $('button#reset').on('click', e => {
 	reset();
 });
-// $('select#theme').on('change', e => {
-// 	// console.log(e.target.value);
-// 	theme = e.target.value;
-// 	wrangleData(rawData);
-// 	update();
-// });
 $('select#indicator').on('change', e => {
-	// console.log(e.target.value);
-	currentCountries = allCountries;
 	indicator = e.target.value;
+	resetLegends();
 	wrangleData(rawData);
 	update();
 });
 
-// $('#countries-legends').children.forEach(child => console.log)
+function countryClick(e) {
+	console.log({ e, currentCountries, title: e.target.title });
 
-// .on('click', e => {
-// 	console.log(e);
-// });
-
-function play() {
-	function step() {
-		currentCountries = allCountries;
-
-		selectedYear = selectedYear === 2020 ? 2000 : selectedYear + 1;
-		$('#date-slider').value = selectedYear;
-		wrangleData(rawData);
-		update();
+	if (e.target.classList.contains('inactive')) {
+		let i = inactiveCountries.indexOf(e.target.title);
+		inactiveCountries.splice(i, 1);
+	} else {
+		inactiveCountries.push(e.target.title);
 	}
-	step();
-	interval = setInterval(step, time);
-}
 
-function pause() {
-	clearInterval(interval);
-}
+	this.classList.toggle('inactive');
+	// console.log(inactiveCountries);
 
-function reset() {
-	selectedYear = 2000;
 	wrangleData(rawData);
 	update();
+	//
 }
 
 (async function init() {
@@ -108,10 +90,11 @@ function reset() {
 
 	// prettier-ignore
 	allCountries = Array.from(new Set([...rawData.map(item => item['UTILITY_Country'])]));
-	currentCountries = allCountries;
 	allIndicators = new Set([...rawData.map(item => item['INDICATOR_Name'])]);
 
-	['All'].concat(Array.from(allIndicators)).forEach(indicator => {
+	currentCountries = allCountries;
+
+	['Todos'].concat(Array.from(allIndicators)).forEach(indicator => {
 		d3.select('select#indicator')
 			.append('option')
 			.attr('value', indicator)
@@ -135,40 +118,22 @@ function reset() {
 
 	wrangleData(rawData);
 	update();
-
-	$('#countries-legends')
-		.children()
-		.on('click', function (e) {
-			console.log({ t: this });
-
-			const country = e.target.__data__;
-			const countryIndex = currentCountries.indexOf(country);
-
-			this.classList.toggle('active');
-
-			// this.classList.add('pressable');
-
-			if (countryIndex === -1) {
-				currentCountries.push(country);
-			} else {
-				currentCountries.splice(countryIndex, 1);
-			}
-
-			wrangleData(rawData);
-			update();
-
-			console.log(currentCountries, countryIndex);
-		});
-})();
+})().then(() => {
+	$('#countries-legends').children().on('click', countryClick);
+});
 
 function update() {
 	setDims();
+	// console.log(currentCountries);
 	svg.attr('width', width).attr('height', height);
 	g.attr('width', width).attr('height', height);
 
 	let root = stratify(hierachy)
 		.sum(d => {
-			let isLeaf = d.parent && d.parent !== 'Root';
+			let isLeaf =
+				d.parent &&
+				d.parent !== 'Root' &&
+				!inactiveCountries.includes(d.parent);
 			return isLeaf ? d.value : 0;
 		})
 		.sort((a, b) => b.value - a.value);
@@ -188,8 +153,9 @@ function update() {
 		.transition()
 		.duration(400)
 		.style('display', d => {
-			// console.log(allSum);
-			return d.value > allSum * hideThreshold ? 'block' : 'none';
+			console.log(allSum);
+			if (d.value > allSum * hideThreshold) return 'block';
+			return 'none';
 		})
 		.attr('title', d => d.id)
 		.style('left', d => d.x0 + 'px')
@@ -253,33 +219,81 @@ function update() {
 		.enter()
 		.append('div')
 		.attr('class', 'legend-container')
+		.attr('title', d => d)
 		.text(d => d)
 		.append('div')
 		.attr('class', 'legend-btn');
 
 	d3.select('#countries-legends')
-		.selectAll('div.legend-container')
-		.data(allCountries)
-		.classed('active', d => !!currentCountries.includes(d));
-
-	d3.select('#countries-legends')
 		.selectAll('div.legend-btn')
 		.data(allCountries)
-		.transition()
-		.style('background', d => {
-			return currentCountries.includes(d)
-				? d3.color(colors[allCountries.indexOf(d)])
-				: '#cdcdcd';
-		});
+		.attr('title', d => d);
 
-	// ------------------------------------------
+	// -------------------- EVENTS ----------------------
 
 	$('h1#year-display').text(selectedYear);
 	$('#date-slider').slider('value', selectedYear);
 	// prettier-ignore
-	$('#companies-info').text(`${indicator === 'All' ? 'Ocurrencias: ' : 'Companias: '} ${hierarchyArrs.companies.length}`);
-	$('#countries-info').text(`Países: ${hierarchyArrs.parents.length}`);
+	$('#companies-info').text(`${indicator === 'Todos' ? 'Ocurrencias: ' : 'Companias: '} ${
+		hierarchyArrs.companies.filter(item => !inactiveCountries.includes(item.parent)).length}`);
+	// prettier-ignore
+	$('#countries-info').text(`Países: ${hierarchyArrs.parents
+		.filter(item => !inactiveCountries.includes(item.id)).length}`);
+
 	$('#total-info').text(`Valor Acumulado: ${format(allSum)}`);
+
+	$('#countries-legends')
+		.children()
+		.each(function (i) {
+			if (currentCountries.includes($(this).attr('title'))) {
+				$(this).css({ display: 'flex' });
+			} else {
+				$(this).css({ display: 'none' });
+			}
+		})
+		.children()
+		.each(function (i) {
+			if (i === 0) console.log($(this), this.classList);
+			$(this).css({ background: colors[i] });
+		});
+}
+
+function play() {
+	function step() {
+		if (selectedYear === 2020) {
+			selectedYear = 2000;
+		} else {
+			selectedYear += 1;
+		}
+
+		$('#date-slider').value = selectedYear;
+		resetLegends();
+		wrangleData(rawData);
+		update();
+	}
+	step();
+	interval = setInterval(step, time);
+}
+
+function pause() {
+	clearInterval(interval);
+}
+
+function reset() {
+	selectedYear = 2000;
+	wrangleData(rawData);
+	update();
+}
+
+function resetLegends() {
+	currentCountries = allCountries;
+	inactiveCountries = [];
+
+	$('#countries-legends')
+		.children()
+		.each(function (i) {
+			this.classList.remove('inactive');
+		});
 }
 
 function reduceBy(key, data) {
@@ -329,11 +343,16 @@ function wrangleData(data) {
 	// prettier-ignore
 	chartData = dataByYearObj[selectedYear]
 		// .filter(item => (theme !== 'All' ? item.theme === theme : true))
-		.filter(item => indicator !== 'All' ? item.indicator === indicator : true)
+		.filter(item => indicator !== 'Todos' ? item.indicator === indicator : true)
 		.filter(item => item.value !== 0)
-		.filter(item => currentCountries.includes(item.country) )
+		.filter(item => currentCountries.includes(item.country))
+	// .filter(item => !inactiveCountries.includes(item.country))
 
-	allSum = chartData.reduce((acc, item) => (acc += Math.abs(item.value)), 0);
+	// inactiveCountries = []
+
+	allSum = chartData
+		.filter(item => !inactiveCountries.includes(item.country))
+		.reduce((acc, item) => (acc += Math.abs(item.value)), 0);
 
 	hierarchyArrs = {
 		root: [{ id: 'Root', parent: '', value: allSum }],
