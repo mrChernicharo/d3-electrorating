@@ -8,6 +8,7 @@ input,
 select,
 button {
 	font-size: min(3vmin, 16px);
+	cursor: pointer;
 }
 button {
 	padding: 0.5rem;
@@ -58,6 +59,38 @@ h1#year-display {
 	width: min(20vmin, 120px);
 }
 
+#countries-legends {
+	/* border: 1px solid #cdcdcd; */
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.legend-container {
+	/* border: 1px solid #cdcdcd; */
+	display: flex;
+	flex-direction: row-reverse;
+	align-items: center;
+	padding: 0.25rem;
+	transition: 0.1s;
+	cursor: default;
+}
+.legend-container.enabled:hover {
+	cursor: pointer;
+	opacity: 0.65;
+	pointer-events: all;
+}
+.legend-container.disabled {
+	pointer-events: none;
+}
+
+.legend-btn {
+	/* border: 1px solid #cdcdcd; */
+	width: 1.1rem;
+	height: 0.75rem;
+	margin-right: 0.25rem;
+	border-radius: 0.15rem;
+}
+
 .container {
 	display: flex;
 	justify-content: center;
@@ -83,6 +116,16 @@ svg {
 	position: absolute;
 	/* padding-left: 0.5rem; */
 }
+
+#text-box {
+	display: flex;
+	padding-left: 2rem;
+}
+
+#text-box > p {
+	margin-right: 1rem;
+}
+
 @media screen and (max-width: 526px) {
 	body {
 		width: 100%;
