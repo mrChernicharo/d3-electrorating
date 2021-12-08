@@ -1,0 +1,140 @@
+body {
+	margin: 0;
+	font-family: sans-serif;
+	font-size: min(2.6vmin, 12px);
+	overflow: hidden;
+}
+input,
+select,
+button {
+	font-size: min(3vmin, 16px);
+	cursor: pointer;
+}
+button {
+	padding: 0.5rem;
+	height: fit-content;
+}
+
+section.menu {
+	border: 1px solid #cdcdcd;
+	width: calc(100vw - 4rem);
+	padding: 0 2rem;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.left-menu {
+	/* border: 1px solid #f00; */
+	display: flex;
+	height: 36px;
+	width: 380px;
+	align-items: bottom;
+}
+
+.select-box {
+	/* border: 1px solid #cdcdcd; */
+	display: flex;
+	flex-direction: column;
+	justify-content: end;
+	width: min(25vmin, 170px);
+	height: min(8vmin, 36px);
+	margin-right: 1rem;
+}
+
+#slider-div {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 0.5rem;
+}
+
+h1#year-display {
+	font-size: min(4vmin, 32px);
+	display: inline;
+	margin: 0;
+}
+
+#date-slider {
+	width: min(20vmin, 120px);
+}
+
+#countries-legends {
+	/* border: 1px solid #cdcdcd; */
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.legend-container {
+	/* border: 1px solid #cdcdcd; */
+	display: flex;
+	flex-direction: row-reverse;
+	align-items: center;
+	padding: 0.25rem;
+	transition: 0.1s;
+	cursor: default;
+}
+.legend-container.valid:hover,
+.legend-container.active:hover {
+	cursor: pointer;
+	opacity: 0.65;
+	pointer-events: all;
+}
+
+.legend-btn {
+	/* border: 1px solid #cdcdcd; */
+	width: 1.1rem;
+	height: 0.75rem;
+	margin-right: 0.25rem;
+	border-radius: 0.15rem;
+}
+.legend-container.inactive > .legend-btn {
+	background-color: #cdcdcd;
+}
+
+.container {
+	display: flex;
+	justify-content: center;
+	padding-top: 20px;
+}
+#chart-area {
+	position: relative;
+}
+
+svg {
+	border: 1px solid #cdcdcd;
+}
+
+.node {
+	box-sizing: border-box;
+	position: absolute;
+	overflow: hidden;
+}
+.text-div {
+	/* border: 1px solid blue; */
+	overflow: hidden;
+	white-space: pre-wrap;
+	position: absolute;
+	/* padding-left: 0.5rem; */
+}
+
+#text-box {
+	display: flex;
+	padding-left: 2rem;
+}
+
+#text-box > p {
+	margin-right: 1rem;
+	font-size: 0.9rem;
+}
+
+@media screen and (max-width: 526px) {
+	body {
+		width: 100%;
+		height: 100%;
+	}
+	section.menu {
+		padding: 0 0.5rem;
+		width: calc(100vw - 1rem);
+	}
+}
