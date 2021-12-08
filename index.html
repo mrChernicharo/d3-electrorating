@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 	<head>
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -16,44 +16,32 @@
 		<section class="menu">
 			<div class="left-menu">
 				<div class="select-box">
-					<label for="tema">Tema</label>
-					<select name="tema" id="theme">
-						<option selected value="All">Todos</option>
-						<option value="ACTIVOS">ACTIVOS</option>
-						<option value="ACCESO">ACCESO</option>
-						<option value="CAPITAL PROPRIO">CAPITAL PROPRIO</option>
-						<option value="PASIVOS">PASIVOS</option>
-					</select>
-				</div>
-				<div class="select-box">
 					<label for="indicator">indicador</label>
-					<select name="indicator" id="indicator">
-						<option selected value="All">Todos</option>
-					</select>
+					<select name="indicator" id="indicator"></select>
 				</div>
-				<!-- <span>&nbsp;&nbsp;&nbsp;&nbsp;</span> -->
+
 				<button id="reset"><i class="fas fa-fast-backward"></i></button>
-				<!-- <button id="setp-back">
-					<i class="fas fa-step-backward"></i>
-				</button> -->
+
 				<button id="play"><i class="fas fa-play"></i></button>
 				<button id="pause" hidden><i class="fas fa-pause"></i></button>
-				<!-- <button id="setp-forward">
-					<i class="fas fa-step-forward"></i>
-				</button> -->
-				<!-- <button id="fast-forward">
-					<i class="fas fa-fast-forward"></i>
-				</button> -->
 			</div>
 			<div id="slider-div">
 				<h1 id="year-display"></h1>
 				<div id="date-slider"></div>
 			</div>
 		</section>
+
+		<div id="countries-legends"></div>
+
 		<div class="container">
 			<div id="chart-area">
 				<svg id="svg"></svg>
 			</div>
+		</div>
+		<div id="text-box">
+			<p id="companies-info"></p>
+			<p id="countries-info"></p>
+			<p id="total-info"></p>
 		</div>
 
 		<!-- prettier-ignore -->
@@ -77,6 +65,7 @@
 
 		<!-- <script src="//d3js.org/d3.v5.min.js"></script> -->
 
+		<script src="constants.js"></script>
 		<script src="index.js"></script>
 	</body>
 </html>
