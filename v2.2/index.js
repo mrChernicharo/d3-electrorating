@@ -241,8 +241,7 @@ function wrangleData() {
 		.append('div')
 		.attr('class', d => `${d.split(' ').join('-')} legend-container`)
 		.attr('title', d => d)
-		.text(d => d)
-		.on('click', (d, i) => {})
+		.text(d => d.split(' ').map(w => w[0] + w.slice(1).toLowerCase()).join(' '))
 		.on('click', legendClick)
 		.append('div')
 		.attr('class', 'legend-btn')
@@ -354,7 +353,7 @@ function update() {
 	$('h1#year-display').text(selectedYear);
 	$('#year-slider').slider('value', selectedYear);
 	$('.legend-container').each(function (i) {
-		if (currCountries.includes(this.innerText)) {
+		if (currCountries.includes(this.title)) {
 			$(this).css({ display: 'flex' });
 		} else {
 			$(this).css({ display: 'none' });
