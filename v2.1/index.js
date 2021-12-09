@@ -6,7 +6,8 @@ window.addEventListener('resize', () => {
 });
 
 let chartData,
-	nestedDataObj,
+	countryByIndicatorObj,
+	indicatorByCountryObj,
 	hierachy,
 	hierarchyArrs = HIERARCHY_ARRS,
 	colors = COLORS,
@@ -17,16 +18,16 @@ let chartData,
 	allIndicators,
 	interval,
 	time = 2000,
-	// hideThreshold = 0.001,
 	g,
 	svg,
 	stratify,
+	// hideThreshold = 0.001,
 	treemap;
 
 $('#year-slider').slider({
 	range: false,
 	max: 2020,
-	min: 2000,
+	min: 1996,
 	step: 1,
 	slide: (e, ui) => {
 		selectedYear = ui.value;
@@ -35,18 +36,10 @@ $('#year-slider').slider({
 	},
 	value: selectedYear,
 });
-$('button#play').on('click', e => {
-	$('button#pause').show();
-	$('button#play').hide();
-	play();
-});
-$('button#pause').on('click', e => {
-	$('button#pause').hide();
-	$('button#play').show();
-	pause();
-});
-$('button#reset').on('click', e => reset());
-$('select#indicator').on('change', e => {});
+$('button#play').on('click', play);
+$('button#pause').on('click', pause);
+$('button#reset').on('click', reset);
+$('select#indicator').on('change', changeIndicator);
 
 function legendClick(d, i) {
 	console.log({ d, i });
@@ -57,15 +50,16 @@ function legendClick(d, i) {
 	wrangleData();
 	update();
 }
-
 function play() {
 	function step() {
 		if (selectedYear !== 2020) {
 			selectedYear += 1;
 		} else {
-			selectedYear = 2000;
+			selectedYear = 1996;
 		}
 
+		$('button#pause').show();
+		$('button#play').hide();
 		$('#year-slider').value = selectedYear;
 
 		wrangleData();
@@ -74,19 +68,31 @@ function play() {
 	step();
 	interval = setInterval(step, time);
 }
-
 function pause() {
+	$('button#pause').hide();
+	$('button#play').show();
 	clearInterval(interval);
 }
-
 function reset() {
-	selectedYear = 2000;
+	selectedYear = 1996;
 	$('#year-slider').value = selectedYear;
 
 	wrangleData();
 	update();
 }
+function changeIndicator(e) {
+	selectedIndicator = e.target.value;
+	wrangleData();
+	update();
+}
 
+function setDims() {
+	margins = { top: 100, left: window.innerWidth / 20 };
+	width = window.innerWidth - margins.left * 2;
+	height = window.innerHeight - margins.top * 2;
+
+	console.log({ height, width, left: margins.left, top: margins.top });
+}
 function format(x) {
 	const s = d3.format('.2s')(x);
 	switch (s[s.length - 1]) {
@@ -98,61 +104,79 @@ function format(x) {
 	return s;
 }
 
-function setDims() {
-	margins = { top: 100, left: window.innerWidth / 20 };
-	width = window.innerWidth - margins.left * 2;
-	height = window.innerHeight - margins.top * 2;
+function getAllIndicatorsData() {
+	const res = {};
+	const data = indicatorByCountryObj[selectedYear];
 
-	console.log({ height, width, left: margins.left, top: margins.top });
+	Object.entries(data).forEach(([cK, cObj]) => {
+		res[cK] = [];
+		Object.entries(cObj).forEach(([indK, indArr]) => {
+			// console.log(indArr);
+			res[cK] = [...res[cK], ...indArr];
+		});
+	});
+
+	return res;
 }
-
-function wrangleData() {
-	const yearData = nestedDataObj[selectedYear];
-	const indicatorData = yearData[selectedIndicator];
-
-	const chartData = Object.entries(selectedCountries)
-		.map(([k, v]) => v === true && indicatorData[k])
-		.filter(Boolean)
-		.flat();
-
-	currCountries = Object.keys(indicatorData);
-	companieValuesSum = d3.sum(chartData, d => d.value);
-
+function reduceCountriesValues(countriesEntries) {
 	const reducedCountriesValues = {};
-
-	Object.keys(indicatorData).forEach(k => {
-		reducedCountriesValues[k] = indicatorData[k].reduce(
+	Object.keys(countriesEntries).forEach(k => {
+		reducedCountriesValues[k] = countriesEntries[k].reduce(
 			(acc, o) => (acc += o.value),
 			0
 		);
 	});
+	return reducedCountriesValues;
+}
 
-	hierachy = {
-		root: [{ id: 'Root', parent: '', value: companieValuesSum }],
-		parents: Object.entries(reducedCountriesValues).map(([k, v]) => ({
-			id: k,
-			value: v,
-			parent: 'Root',
-		})),
-		companies: chartData.map(item => ({
-			id: item.company,
-			value: item.value,
-			parent: item.country,
-		})),
-	};
-	// companieValuesSum = chartData.reduce((acc, o) => (acc += o.value), 0);
+function wrangleData() {
+	const indicatorsByYear = countryByIndicatorObj[selectedYear];
 
+	const countriesEntries =
+		selectedIndicator !== 'Todos'
+			? indicatorsByYear[selectedIndicator] || {}
+			: getAllIndicatorsData() || {};
+
+	const chartData = Object.entries(selectedCountries)
+		.map(([k, v]) => (v === true ? countriesEntries[k] : null))
+		.filter(Boolean)
+		.flat();
+
+	currCountries = Object.keys(countriesEntries);
+
+	companieValuesSum = d3.sum(chartData, d => d.value);
+	reducedCountriesValues = reduceCountriesValues(countriesEntries);
+
+	{
+		// hierachy = {
+		// 	root: [{ id: 'Root', parent: '', value: companieValuesSum }],
+		// 	parents: Object.entries(reducedCountriesValues).map(([k, v]) => ({
+		// 		id: k,
+		// 		value: v,
+		// 		parent: 'Root',
+		// 	})),
+		// 	companies: chartData.map(item => ({
+		// 		id: item.company,
+		// 		value: item.value,
+		// 		parent: item.country,
+		// 	})),
+		// };
+		// companieValuesSum = chartData.reduce((acc, o) => (acc += o.value), 0);
+	}
 	console.log({
 		// formatedData,
-		// nestedDataObj,
-		// yearData,
+		// countryByIndicatorObj,
+		// indicatorByCountryObj,
+		// 	indicatorsByYear,
 		reducedCountriesValues,
 		chartData,
-		companieValuesSum,
-		currCountries,
-		indicatorData,
-		hierachy,
+		// 	// 	companieValuesSum,
+		// 	// 	currCountries,
+		countriesEntries,
+		// 	// 	// hierachy,
 	});
+	console.log('==============================');
+
 	{
 		// hierarchyArrs = {
 		// 	root: [{ id: 'Root', parent: '', value: companieValuesSum }],
@@ -202,15 +226,20 @@ function wrangleData() {
 		}))
 		.filter(item => item.value !== 0);
 
-	nestedDataObj = d3
-		.nest()
+	countryByIndicatorObj = d3.nest()
 		.key(d => d.year)
 		.key(d => d.indicator)
 		.key(d => d.country)
 		.object(formatedData);
 
+	indicatorByCountryObj = d3.nest()		
+		.key(d => d.year)
+		.key(d => d.country)
+		.key(d => d.indicator)
+		.object(formatedData);
+
 	allCountries = Array.from(new Set(rawData.map(item => item['UTILITY_Country'])));
-	allIndicators = Array.from(new Set(rawData.map(item => item['INDICATOR_Name'])));
+	allIndicators = Array.from(new Set(rawData.map(item => item['INDICATOR_Name']))).sort()
 	allCompanies = Array.from(new Set(rawData.map(item => item['UTILITY_Name'])));
 
 	allCountries.forEach(c => selectedCountries[c] = true);
@@ -219,8 +248,16 @@ function wrangleData() {
 
 	g = svg.append('g');
 
-	// append-buttons
 	(function () {
+
+		// append-select-options
+		['Todos'].concat(Array.from(allIndicators)).forEach(indicator => {
+			d3.select('select#indicator')
+				.append('option')
+				.attr('value', indicator)
+				.text(indicator);
+		});
+		// append-buttons
 		d3.select('#countries-legends')
 			.selectAll('div')
 			.data(allCountries)
@@ -234,6 +271,12 @@ function wrangleData() {
 			.append('div')
 			.attr('class', 'legend-btn')
 			.style('background', (d, i) => `var(--${d.split(' ').join('-')})`);
+
+		$('select#indicator').children().each(function() {
+			if ($(this).val() === selectedIndicator) {
+				$(this).attr('selected', true)
+			}
+		})
 	})();
 
 	stratify = d3
@@ -250,6 +293,9 @@ function wrangleData() {
 		selectedCountries,
 		allIndicators,
 		allCompanies,
+		formatedData,
+		countryByIndicatorObj,
+		indicatorByCountryObj,
 	});
 
 	wrangleData();
