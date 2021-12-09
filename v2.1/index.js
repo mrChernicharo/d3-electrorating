@@ -143,37 +143,37 @@ function wrangleData() {
 		.flat();
 
 	currCountries = Object.keys(countriesEntries);
-
 	companieValuesSum = d3.sum(chartData, d => d.value);
 	reducedCountriesValues = reduceCountriesValues(countriesEntries);
+	companieValuesSum = chartData.reduce((acc, o) => (acc += o.value), 0);
 
-	{
-		// hierachy = {
-		// 	root: [{ id: 'Root', parent: '', value: companieValuesSum }],
-		// 	parents: Object.entries(reducedCountriesValues).map(([k, v]) => ({
-		// 		id: k,
-		// 		value: v,
-		// 		parent: 'Root',
-		// 	})),
-		// 	companies: chartData.map(item => ({
-		// 		id: item.company,
-		// 		value: item.value,
-		// 		parent: item.country,
-		// 	})),
-		// };
-		// companieValuesSum = chartData.reduce((acc, o) => (acc += o.value), 0);
-	}
+	const hierachyObj = {
+		root: [{ id: 'Root', parent: '', value: companieValuesSum }],
+		parents: Object.entries(reducedCountriesValues).map(([k, v]) => ({
+			id: k,
+			value: v,
+			parent: 'Root',
+		})),
+		companies: chartData.map(item => ({
+			id: item.company,
+			value: item.value,
+			parent: item.country,
+		})),
+	};
+
+	hierachy = [...Object.entries(hierachyObj).map(([k, v]) => v)].flat();
+
 	console.log({
 		// formatedData,
 		// countryByIndicatorObj,
 		// indicatorByCountryObj,
-		// 	indicatorsByYear,
+		// indicatorsByYear,
 		reducedCountriesValues,
-		chartData,
-		// 	// 	companieValuesSum,
-		// 	// 	currCountries,
-		countriesEntries,
-		// 	// 	// hierachy,
+		// chartData,
+		companieValuesSum,
+		// 	currCountries,
+		// countriesEntries,
+		hierachy,
 	});
 	console.log('==============================');
 
@@ -238,7 +238,7 @@ function wrangleData() {
 		.key(d => d.indicator)
 		.object(formatedData);
 
-	allCountries = Array.from(new Set(rawData.map(item => item['UTILITY_Country'])));
+	allCountries = Array.from(new Set(rawData.map(item => item['UTILITY_Country']))).sort();
 	allIndicators = Array.from(new Set(rawData.map(item => item['INDICATOR_Name']))).sort()
 	allCompanies = Array.from(new Set(rawData.map(item => item['UTILITY_Name'])));
 
@@ -303,47 +303,66 @@ function wrangleData() {
 })();
 
 function update() {
-	{
-		// let root = stratify(hierachy)
-		// 	.sum(d => {
-		// 		let isLeaf =
-		// 			d.parent &&
-		// 			d.parent !== 'Root' &&
-		// 			!inactiveCountries.includes(d.parent);
-		// 		return isLeaf ? d.value : 0;
-		// 	})
-		// 	.sort((a, b) => b.value - a.value);
-		// treemap(width, height)(root);
-		// ----------------- TEXT ----------------- ///
-		// d3.select('#chart-area')
-		// 	.selectAll('.text-div')
-		// 	.data([...root.leaves()])
-		// 	.join('div');
-		// ----------------- RECTS --------------------------- //
-		// d3.select('g')
-		// 	.selectAll('.node')
-		// 	.data([...root.leaves()])
-		// 	.join('rect')
-		// 	.attr('class', d => {
-		// 		return d.depth === 1 ? 'node parent' : 'node';
-		// 	});
-		// ------------------ LEGENDS ------------------ //
-		// d3.select('#countries-legends')
-		// 	.selectAll('div')
-		// 	.data(allCountries)
-		// 	.enter()
-		// 	.append('div')
-		// 	.attr('class', 'legend-container')
-		// 	.attr('title', d => d)
-		// 	.text(d => d)
-		// 	.append('div')
-		// 	.attr('class', 'legend-btn');
-		// d3.select('#countries-legends')
-		// 	.selectAll('div.legend-btn')
-		// 	.data(allCountries)
-		// 	.attr('title', d => d);
-		// -------------------- EVENTS ----------------------
-	}
+	svg.attr('width', width).attr('height', height);
+	g.attr('width', width).attr('height', height);
+
+	let root = stratify(hierachy)
+		.sum(d => {
+			// console.log(d);
+			let isLeaf = d.parent && d.parent !== 'Root';
+			return isLeaf ? d.value : 0;
+		})
+		.sort((a, b) => b.value - a.value);
+	treemap(width, height)(root);
+	// ----------------- TEXT ----------------- ///
+
+	d3.select('g')
+		.selectAll('.node')
+		.data(root.leaves())
+		.join('rect')
+		.attr('class', d => {
+			return d.depth === 1 ? 'node parent' : 'node';
+		})
+		.attr('width', d => d.x1 - d.x0 + 'px')
+		.attr('height', d => d.y1 - d.y0 + 'px')
+		.transition()
+		.duration(400)
+		.attr('title', d => d.id)
+		.style('x', d => d.x0 + 'px')
+		.style('y', d => d.y0 + 'px')
+		.attr('width', d => d.x1 - d.x0 + 'px')
+		.attr('height', d => d.y1 - d.y0 + 'px')
+		.attr('opacity', d => 0.7)
+		.attr('fill', d => {
+			if (!d.parent || d.parent.id === 'Root') return 'none';
+			return `var(--${d.parent.id.split(' ').join('-')})`;
+			// return '#cdcdcd';
+		});
+
+	// ----------------- RECTS --------------------------- //
+	d3.select('g')
+		.selectAll('.node')
+		.data([...root.leaves()])
+		.join('rect')
+		.attr('class', d => {
+			return d.depth === 1 ? 'node parent' : 'node';
+		});
+	// ------------------ LEGENDS ------------------ //
+	// d3.select('#countries-legends')
+	// 	.selectAll('div')
+	// 	.data(allCountries)
+	// 	.enter()
+	// 	.append('div')
+	// 	.attr('class', 'legend-container')
+	// 	.attr('title', d => d)
+	// 	.text(d => d)
+	// 	.append('div')
+	// 	.attr('class', 'legend-btn');
+	// d3.select('#countries-legends')
+	// 	.selectAll('div.legend-btn')
+	// 	.data(allCountries)
+	// 	.attr('title', d => d);
+	// -------------------- EVENTS ----------------------
 	$('h1#year-display').text(selectedYear);
 	$('#year-slider').slider('value', selectedYear);
 	$('.legend-container').each(function (i) {

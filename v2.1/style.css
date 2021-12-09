@@ -103,12 +103,10 @@ h1#year-display {
 	flex-direction: row-reverse;
 	align-items: center;
 	padding: 0.25rem;
-	transition: 0.1s;
-	cursor: default;
-}
-.legend-container.valid:hover,
-.legend-container.active:hover {
+	transition: 0.2s;
 	cursor: pointer;
+}
+.legend-container:hover {
 	opacity: 0.65;
 	pointer-events: all;
 }
