@@ -13,14 +13,19 @@
 		/>
 	</head>
 	<body>
+		<p class="heading">
+			ELECTRORATING - <strong>Datos No Financieros</strong>
+		</p>
 		<section class="menu">
 			<div class="left-menu">
 				<div class="select-box">
-					<label for="indicator">indicador</label>
+					<!-- INDICATOR SELECT -->
+					<label for="indicator">Indicador</label>
 					<select name="indicator" id="indicator"></select>
 				</div>
 			</div>
-			<div class="btns-box">
+			<!-- PLAY/PAUSE/RESET BUTTONS -->
+			<div class="play-btns-box">
 				<button id="reset">
 					<i class="fas fa-fast-backward"></i>
 				</button>
@@ -29,23 +34,28 @@
 					<i class="fas fa-pause"></i>
 				</button>
 			</div>
+			<!-- YEAR SLIDER -->
 			<div id="slider-div">
 				<h1 id="year-display"></h1>
-				<div id="date-slider"></div>
+				<div id="year-slider"></div>
 			</div>
 		</section>
 
+		<!-- COUNTRIES LEGENDS -->
 		<div id="countries-legends"></div>
 
-		<div class="container">
-			<div id="chart-area">
-				<svg id="svg"></svg>
-			</div>
-		</div>
+		<!-- TEXT STATS -->
 		<div id="text-box">
 			<p id="companies-info"></p>
 			<p id="countries-info"></p>
 			<p id="total-info"></p>
+		</div>
+
+		<!-- CHART AREA -->
+		<div class="container">
+			<div id="chart-area">
+				<svg id="svg"></svg>
+			</div>
 		</div>
 
 		<!-- prettier-ignore -->

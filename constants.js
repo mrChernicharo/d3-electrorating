@@ -22,3 +22,7 @@ const COLORS = [
 	'darkorange', // 15: "COLOMBIA"
 	'royalblue', // 16: "URUGUAY"
 ];
+
+let margins = { top: 100, left: document.body.innerWidth / 20 };
+let width = document.body.innerWidth - margins.left * 2;
+let height = document.body.innerHeight - margins.top * 2;

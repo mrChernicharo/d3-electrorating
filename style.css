@@ -1,3 +1,25 @@
+:root {
+	--ARGENTINA: #afcaff;
+	--BELIZE: olive;
+	--COSTA-RICA: goldenrod;
+	--ECUADOR: mediumseagreen;
+	--BRASIL: #478f47;
+	--GUYANA: rgb(93, 187, 93);
+	--JAMAICA: #7d44a5;
+	--PANAMA: royalblue;
+	--BOLIVIA: tan;
+	--EL-SALVADOR: #014b01;
+	--PERU: peru;
+	--TRINIDAD-Y-TOBAGO: lightblue;
+	--CHILE: crimson;
+	--COLOMBIA: darkorange;
+	--URUGUAY: #2989e9;
+	--MEXICO: #fd771e;
+	--PARAGUAY: #ca4961;
+	--REPUBLICA-DOMINICANA: #ffd623;
+	--GUATEMALA: salmon;
+}
+
 body {
 	margin: 0;
 	font-family: sans-serif;
@@ -9,31 +31,55 @@ select,
 button {
 	font-size: min(3vmin, 16px);
 	cursor: pointer;
+	border: 1px solid #cdcdcd;
+	border-radius: 4px;
+}
+
+p,
+label {
+	font-size: min(2.8vmin, 14px);
+}
+p {
+	margin: 0.5rem 1rem 0.5rem 0;
+}
+
+p.heading {
+	padding-left: 2rem;
+	text-align: center;
+	margin-bottom: -2px;
 }
 button {
 	padding: 0.5rem;
 	height: fit-content;
 }
 
+button,
+button > i {
+	transition: 0.2s;
+}
+button:hover {
+	opacity: 0.65;
+}
+button:hover > i {
+	color: #003eff;
+}
+
 section.menu {
-	border: 1px solid #cdcdcd;
+	/* border-top: 1px solid #efefef; */
 	width: calc(100vw - 4rem);
-	padding: 0 2rem;
+	padding: 0 2rem 0.5rem;
 	display: flex;
 	justify-content: space-between;
-	align-items: center;
+	align-items: end;
+	box-shadow: 0px 6px 10px -6px #cdcdcd;
 }
 
 .left-menu {
-	/* border: 1px solid #f00; */
-	display: flex;
-	height: 36px;
-	width: 380px;
-	align-items: bottom;
+	padding-bottom: 0.1rem;
 }
 
 .select-box {
-	/* border: 1px solid #cdcdcd; */
+	/* border: 1px solid #efefef; */
 	display: flex;
 	flex-direction: column;
 	justify-content: end;
@@ -42,7 +88,7 @@ section.menu {
 	margin-right: 1rem;
 }
 
-.btns-box {
+.play-btns-box {
 	/* border: 1px solid; */
 	width: 100%;
 	display: flex;
@@ -55,7 +101,7 @@ section.menu {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	padding: 0.5rem;
+	padding-inline: 0.5rem;
 }
 
 h1#year-display {
@@ -64,55 +110,64 @@ h1#year-display {
 	margin: 0;
 }
 
-#date-slider {
+#year-slider {
 	width: min(25vmin, 220px);
 }
 
-#countries-legends {
-	/* border: 1px solid #cdcdcd; */
+#text-box {
+	/* border-bottom: 1px solid #efefef; */
 	display: flex;
+	justify-content: end;
+	padding-inline: 2rem;
+}
+
+#countries-legends {
+	border: 1px solid #efefef;
+	display: flex;
+	justify-content: center;
 	flex-wrap: wrap;
-	padding: 1rem 2rem 0;
+	max-height: 43px;
+	overflow-y: auto;
+	padding: 0.5rem 0.5rem 0.25rem 1.75rem;
+	/* padding: 0.5rem 1.75rem 0.25rem; */
 }
 
 .legend-container {
-	/* border: 1px solid #cdcdcd; */
+	/* border: 1px solid #efefef; */
 	display: flex;
 	flex-direction: row-reverse;
 	align-items: center;
 	padding: 0.25rem;
-	transition: 0.1s;
-	cursor: default;
-}
-.legend-container.valid:hover,
-.legend-container.active:hover {
+	transition: 0.2s;
 	cursor: pointer;
+}
+.legend-container:hover {
 	opacity: 0.65;
 	pointer-events: all;
 }
 
 .legend-btn {
-	/* border: 1px solid #cdcdcd; */
 	width: 1.1rem;
 	height: 0.75rem;
 	margin-right: 0.25rem;
 	border-radius: 0.15rem;
+	opacity: 0.7;
 }
 .legend-container.inactive > .legend-btn {
-	background-color: #cdcdcd !important;
+	background-color: #efefef !important;
 }
 
 .container {
 	display: flex;
 	justify-content: center;
-	padding-top: 20px;
 }
 #chart-area {
 	position: relative;
 }
 
 svg {
-	border: 1px solid #cdcdcd;
+	/* border: 1px solid #efefef; */
+	background: #efefef;
 }
 
 .node {
@@ -125,21 +180,13 @@ svg {
 	overflow: hidden;
 	white-space: pre-wrap;
 	position: absolute;
-	/* padding-left: 0.5rem; */
-}
-
-#text-box {
-	display: flex;
-	padding-left: 2rem;
-}
-
-#text-box > p {
-	margin-right: 1rem;
-	font-size: 0.9rem;
 }
 
 @media screen and (max-width: 700px) {
-	.btns-box {
+	p.heading {
+		margin-bottom: 6px;
+	}
+	.play-btns-box {
 		padding-top: 0;
 		padding-right: 0;
 	}
@@ -149,8 +196,20 @@ svg {
 		width: 100%;
 		height: 100%;
 	}
-	section.menu {
-		padding: 0 0.5rem;
+
+	section.menu,
+	#text-box,
+	#countries-legends {
+		padding-left: 0.5rem;
 		width: calc(100vw - 1rem);
+	}
+
+	.left-menu {
+		padding: 0 0.5rem 0.1rem;
+	}
+}
+@media screen and (max-width: 416px) {
+	#countries-legends {
+		max-height: 40px;
 	}
 }
