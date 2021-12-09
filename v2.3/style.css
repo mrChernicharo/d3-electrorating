@@ -1,0 +1,229 @@
+:root {
+	--ARGENTINA: #afcaff;
+	--BELIZE: olive;
+	--COSTA-RICA: goldenrod;
+	--ECUADOR: mediumseagreen;
+	--BRASIL: #478f47;
+	--GUYANA: rgb(93, 187, 93);
+	--JAMAICA: #7d44a5;
+	--PANAMA: royalblue;
+	--BOLIVIA: tan;
+	--EL-SALVADOR: #014b01;
+	--PERU: peru;
+	--TRINIDAD-Y-TOBAGO: lightblue;
+	--CHILE: crimson;
+	--COLOMBIA: darkorange;
+	--URUGUAY: #2989e9;
+	--MEXICO: #fd771e;
+	--PARAGUAY: #ca4961;
+	--REPUBLICA-DOMINICANA: #ffd623;
+	--GUATEMALA: salmon;
+}
+
+body {
+	margin: 0;
+	font-family: sans-serif;
+	font-size: min(2.6vmin, 12px);
+	overflow: hidden;
+}
+input,
+select,
+button {
+	font-size: min(3vmin, 16px);
+	cursor: pointer;
+	border: 1px solid #cdcdcd;
+	border-radius: 4px;
+}
+
+p,
+label {
+	font-size: min(2.8vmin, 14px);
+}
+p {
+	margin: 0.5rem 1rem 0.5rem 0;
+}
+
+p.heading {
+	padding-left: 2rem;
+	text-align: center;
+	margin-bottom: -2px;
+}
+button {
+	padding: 0.5rem;
+	height: fit-content;
+}
+
+button,
+button > i {
+	transition: 0.2s;
+}
+button:hover {
+	opacity: 0.65;
+}
+button:hover > i {
+	color: #003eff;
+}
+
+section.menu {
+	/* border-top: 1px solid #efefef; */
+	width: calc(100vw - 4rem);
+	padding: 0 2rem 0.5rem;
+	display: flex;
+	justify-content: space-between;
+	align-items: end;
+	box-shadow: 0px 6px 10px -6px #cdcdcd;
+}
+
+.left-menu {
+	padding-bottom: 0.1rem;
+}
+
+.select-box {
+	/* border: 1px solid #efefef; */
+	display: flex;
+	flex-direction: column;
+	justify-content: end;
+	width: min(25vmin, 220px);
+	height: min(8vmin, 36px);
+	margin-right: 1rem;
+}
+
+.play-btns-box {
+	/* border: 1px solid; */
+	width: 100%;
+	display: flex;
+	justify-content: end;
+	padding-top: 0.5rem;
+	padding-right: 0.5rem;
+}
+
+#slider-div {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding-inline: 0.5rem;
+}
+
+h1#year-display {
+	font-size: min(4vmin, 32px);
+	display: inline;
+	margin: 0;
+}
+
+#year-slider {
+	width: min(25vmin, 220px);
+}
+
+#text-box {
+	/* border-bottom: 1px solid #efefef; */
+	display: flex;
+	justify-content: end;
+	padding-inline: 2rem;
+}
+
+#countries-legends {
+	border: 1px solid #efefef;
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+	max-height: 43px;
+	overflow-y: auto;
+	padding: 0.5rem 0.5rem 0.25rem 1.75rem;
+	/* padding: 0.5rem 1.75rem 0.25rem; */
+}
+
+.legend-container {
+	/* border: 1px solid #efefef; */
+	display: flex;
+	flex-direction: row-reverse;
+	align-items: center;
+	padding: 0.25rem;
+	transition: 0.2s;
+	cursor: pointer;
+}
+.legend-container:hover {
+	opacity: 0.65;
+	pointer-events: all;
+}
+
+.legend-btn {
+	width: 1.1rem;
+	height: 0.75rem;
+	margin-right: 0.25rem;
+	border-radius: 0.15rem;
+	opacity: 0.7;
+}
+.legend-container.inactive > .legend-btn {
+	background-color: #efefef !important;
+}
+
+.container {
+	display: flex;
+	justify-content: center;
+}
+#chart-area {
+	position: relative;
+}
+
+svg {
+	/* border: 1px solid #efefef; */
+	background: #efefef;
+}
+
+.node {
+	box-sizing: border-box;
+	position: absolute;
+	overflow: hidden;
+}
+.text-div {
+	/* border: 1px solid blue; */
+	overflow: hidden;
+	white-space: pre-wrap;
+	position: absolute;
+	pointer-events: none;
+}
+
+#tooltip {
+	opacity: 0;
+	background: #2c2c2c;
+	color: #fff;
+	padding: 0.75rem;
+	position: absolute;
+	border-radius: 4px;
+	transition: 0.4s;
+}
+.row {
+	display: flex;
+}
+
+@media screen and (max-width: 700px) {
+	p.heading {
+		margin-bottom: 6px;
+	}
+	.play-btns-box {
+		padding-top: 0;
+		padding-right: 0;
+	}
+}
+@media screen and (max-width: 526px) {
+	body {
+		width: 100%;
+		height: 100%;
+	}
+
+	section.menu,
+	#text-box,
+	#countries-legends {
+		padding-left: 0.5rem;
+		width: calc(100vw - 1rem);
+	}
+
+	.left-menu {
+		padding: 0 0.5rem 0.1rem;
+	}
+}
+@media screen and (max-width: 416px) {
+	#countries-legends {
+		max-height: 40px;
+	}
+}
