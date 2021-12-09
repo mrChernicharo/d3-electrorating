@@ -13,7 +13,7 @@ let chartData,
 	selectedYear = 2014,
 	selectedIndicator = 'CLIENTES',
 	selectedCountries = {},
-	currCounties,
+	currCountries,
 	allIndicators,
 	interval,
 	time = 2000,
@@ -115,17 +115,43 @@ function wrangleData() {
 		.filter(Boolean)
 		.flat();
 
-	currCounties = Object.keys(indicatorData);
-	companieValuesSum = chartData.reduce((acc, o) => (acc += o.value), 0);
+	currCountries = Object.keys(indicatorData);
+	companieValuesSum = d3.sum(chartData, d => d.value);
+
+	const reducedCountriesValues = {};
+
+	Object.keys(indicatorData).forEach(k => {
+		reducedCountriesValues[k] = indicatorData[k].reduce(
+			(acc, o) => (acc += o.value),
+			0
+		);
+	});
+
+	hierachy = {
+		root: [{ id: 'Root', parent: '', value: companieValuesSum }],
+		parents: Object.entries(reducedCountriesValues).map(([k, v]) => ({
+			id: k,
+			value: v,
+			parent: 'Root',
+		})),
+		companies: chartData.map(item => ({
+			id: item.company,
+			value: item.value,
+			parent: item.country,
+		})),
+	};
+	// companieValuesSum = chartData.reduce((acc, o) => (acc += o.value), 0);
 
 	console.log({
 		// formatedData,
 		// nestedDataObj,
 		// yearData,
+		reducedCountriesValues,
 		chartData,
 		companieValuesSum,
-		currCounties,
+		currCountries,
 		indicatorData,
+		hierachy,
 	});
 	{
 		// hierarchyArrs = {
@@ -209,7 +235,7 @@ function wrangleData() {
 			.attr('class', 'legend-btn')
 			.style('background', (d, i) => `var(--${d.split(' ').join('-')})`);
 	})();
-	
+
 	stratify = d3
 		.stratify()
 		.id(d => d.id)
@@ -275,7 +301,7 @@ function update() {
 	$('h1#year-display').text(selectedYear);
 	$('#year-slider').slider('value', selectedYear);
 	$('.legend-container').each(function (i) {
-		if (currCounties.includes(this.innerText)) {
+		if (currCountries.includes(this.innerText)) {
 			$(this).css({ display: 'flex' });
 		} else {
 			$(this).css({ display: 'none' });
