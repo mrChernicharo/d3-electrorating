@@ -32,10 +32,14 @@ button {
 	font-size: min(3vmin, 16px);
 	cursor: pointer;
 	border: 1px solid #cdcdcd;
+	border-radius: 4px;
 }
 
-p {
+p,
+label {
 	font-size: min(2.8vmin, 14px);
+}
+p {
 	margin: 0.5rem 1rem 0.5rem 0;
 }
 
@@ -47,6 +51,17 @@ p.heading {
 button {
 	padding: 0.5rem;
 	height: fit-content;
+}
+
+button,
+button > i {
+	transition: 0.2s;
+}
+button:hover {
+	opacity: 0.65;
+}
+button:hover > i {
+	color: #003eff;
 }
 
 section.menu {
@@ -109,10 +124,12 @@ h1#year-display {
 #countries-legends {
 	border: 1px solid #efefef;
 	display: flex;
+	justify-content: center;
 	flex-wrap: wrap;
 	max-height: 43px;
 	overflow-y: auto;
-	padding: 0.25rem 1.75rem 0.25rem;
+	padding: 0.5rem 0.5rem 0.25rem 1.75rem;
+	/* padding: 0.5rem 1.75rem 0.25rem; */
 }
 
 .legend-container {
@@ -186,9 +203,13 @@ svg {
 		padding-left: 0.5rem;
 		width: calc(100vw - 1rem);
 	}
+
+	.left-menu {
+		padding: 0 0.5rem 0.1rem;
+	}
 }
 @media screen and (max-width: 416px) {
 	#countries-legends {
-		max-height: 42px;
+		max-height: 40px;
 	}
 }

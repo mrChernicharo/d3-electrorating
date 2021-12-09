@@ -96,6 +96,7 @@ function setDims() {
 }
 function formatNum(x) {
 	if (x === 0) return 0;
+	if (x < 10) return Number(x);
 	const s = d3.format('.2s')(x);
 	switch (s[s.length - 1]) {
 		case 'G':
