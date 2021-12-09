@@ -95,6 +95,7 @@ function setDims() {
 	console.log({ height, width, left: margins.left, top: margins.top });
 }
 function formatNum(x) {
+	if (x === 0) return 0;
 	const s = d3.format('.2s')(x);
 	switch (s[s.length - 1]) {
 		case 'G':

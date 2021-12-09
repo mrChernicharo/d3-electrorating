@@ -5,19 +5,19 @@
 	--ECUADOR: mediumseagreen;
 	--BRASIL: #478f47;
 	--GUYANA: rgb(93, 187, 93);
-	--JAMAICA: indigo;
-	--MEXICO: salmon;
+	--JAMAICA: #7d44a5;
 	--PANAMA: royalblue;
 	--BOLIVIA: tan;
 	--EL-SALVADOR: #014b01;
-	--PARAGUAY: coral;
 	--PERU: peru;
-	--REPUBLICA-DOMINICANA: lightcoral;
 	--TRINIDAD-Y-TOBAGO: lightblue;
 	--CHILE: crimson;
 	--COLOMBIA: darkorange;
 	--URUGUAY: #2989e9;
-	--GUATEMALA: lightcoral;
+	--MEXICO: #fd771e;
+	--PARAGUAY: #ca4961;
+	--REPUBLICA-DOMINICANA: #ffd623;
+	--GUATEMALA: salmon;
 }
 
 body {
@@ -35,6 +35,11 @@ button {
 
 p {
 	font-size: min(2.8vmin, 14px);
+	margin: 0.5rem 1rem 0.5rem 0;
+}
+
+p.heading {
+	padding-left: 2rem;
 }
 button {
 	padding: 0.5rem;
@@ -42,20 +47,16 @@ button {
 }
 
 section.menu {
-	border: 1px solid #efefef;
+	border-top: 1px solid #efefef;
 	width: calc(100vw - 4rem);
-	padding: 0 2rem 0.25rem;
+	padding: 0 2rem 0.5rem;
 	display: flex;
 	justify-content: space-between;
-	align-items: center;
+	align-items: end;
 }
 
 .left-menu {
-	/* border: 1px solid #f00; */
-	display: flex;
-	height: 36px;
-	width: 380px;
-	align-items: bottom;
+	padding-bottom: 0.1rem;
 }
 
 .select-box {
@@ -81,7 +82,7 @@ section.menu {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	padding: 0.5rem;
+	padding-inline: 0.5rem;
 }
 
 h1#year-display {
@@ -95,15 +96,10 @@ h1#year-display {
 }
 
 #text-box {
-	border: 1px solid #efefef;
+	border-bottom: 1px solid #efefef;
 	display: flex;
 	justify-content: end;
 	padding-inline: 2rem;
-}
-
-#text-box > p {
-	margin: 0.5rem 1rem 0.5rem 0;
-	/* font-size: 0.9rem; */
 }
 
 #countries-legends {
