@@ -87,7 +87,7 @@ function changeIndicator(e) {
 }
 
 function setDims() {
-	margins = { top: 100, left: window.innerWidth / 20 };
+	margins = { top: 110, left: window.innerWidth / 20 };
 	width = window.innerWidth - margins.left * 2;
 	height = window.innerHeight - margins.top * 2;
 
