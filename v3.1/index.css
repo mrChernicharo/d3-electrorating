@@ -1,0 +1,103 @@
+:root {
+	--ARGENTINA: #afcaff;
+	--BELIZE: olive;
+	--COSTA-RICA: goldenrod;
+	--ECUADOR: mediumseagreen;
+	--BRASIL: #478f47;
+	--GUYANA: rgb(93, 187, 93);
+	--JAMAICA: #7d44a5;
+	--PANAMA: royalblue;
+	--BOLIVIA: tan;
+	--EL-SALVADOR: #014b01;
+	--PERU: peru;
+	--TRINIDAD-Y-TOBAGO: lightblue;
+	--CHILE: crimson;
+	--COLOMBIA: darkorange;
+	--URUGUAY: #2989e9;
+	--MEXICO: #fd771e;
+	--PARAGUAY: #ca4961;
+	--REPUBLICA-DOMINICANA: #ffd623;
+	--GUATEMALA: salmon;
+}
+
+body {
+	margin: 0;
+	font-family: sans-serif;
+	font-size: min(2.6vmin, 12px);
+	overflow: hidden;
+	height: 100vh;
+}
+input,
+select,
+button {
+	font-size: min(3vmin, 16px);
+	cursor: pointer;
+	border: 1px solid #cdcdcd;
+	border-radius: 4px;
+}
+select {
+	height: min(10vmin, 30px);
+	width: min(40vmin, 320px);
+}
+a {
+	text-decoration: none;
+	transition: 0.3s;
+	color: #000;
+}
+
+h1 {
+	text-align: center;
+}
+p,
+label {
+	font-size: min(2.8vmin, 14px);
+}
+
+button {
+	padding: 0.5rem;
+	height: fit-content;
+	background: transparent;
+	border: none;
+}
+
+button,
+button > i {
+	transition: 0.2s;
+}
+button:hover {
+	opacity: 0.65;
+}
+div:hover,
+div:hover > i,
+button:hover > i {
+	color: #003eff;
+}
+
+main {
+	/* border: 1px solid red; */
+	display: flex;
+}
+.link-container {
+	/* border: 1px solid blue; */
+	height: 400px;
+	width: 50%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.link-container div {
+	/* border: 1px solid blue; */
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+	height: 160px;
+	width: 200px;
+	cursor: pointer;
+	padding: 2rem;
+	border-radius: 0.5rem;
+	transition: 0.3s;
+}
+.link-container div:hover {
+	background: #efefef;
+}
