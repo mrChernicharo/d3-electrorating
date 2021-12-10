@@ -52,7 +52,7 @@ function countryClick(e) {}
 
 (async function init() {
 	// prettier-ignore
-	const rawData = await d3.dsv(';', '../electrorating_indicadores_no_financieros.csv');
+	const rawData = await d3.dsv(';', '../data/electrorating_indicadores_no_financieros.csv');
 	console.log(rawData);
 
 	svg = d3.select('svg');

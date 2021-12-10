@@ -3,7 +3,7 @@ import fs from 'fs';
 
 const rawData, jsonData, zeroUSDfiltered, zeroUSDDsv;
 
-const filePath = '../electrorating_indicadores_financieros.csv';
+const filePath = '../data/electrorating_indicadores_financieros.csv';
 
 const rawCsv = await fs.promises.readFile(filePath, 'utf-8', (err, d) => d);
 

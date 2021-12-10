@@ -6,7 +6,7 @@ let formatedData,
 	selectedProp = 'year',
 	selectedYear = 2010;
 
-d3.dsv(';', '../electrorating_indicadores_financieros.csv').then(data => {
+d3.dsv(';', '../data/electrorating_indicadores_financieros.csv').then(data => {
 	console.log(data);
 
 	setInterval(() => {

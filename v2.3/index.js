@@ -181,7 +181,7 @@ function wrangleData() {
 (async function init() {
 	setDims();
 
-	const rawData = await d3.dsv(';', '../electrorating_indicadores_no_financieros_v2.csv');
+	const rawData = await d3.dsv(';', '../data/electrorating_indicadores_no_financieros_v2.csv');
 
 	const formatedData = rawData
 		.map(item => ({

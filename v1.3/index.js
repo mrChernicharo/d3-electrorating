@@ -63,7 +63,7 @@ function reset() {
 
 (async function init() {
 	// prettier-ignore
-	const data = await d3.dsv(';', '../electrorating_indicadores_financieros.csv');
+	const data = await d3.dsv(';', '../data/electrorating_indicadores_financieros.csv');
 	console.log(data);
 	rawData = data;
 

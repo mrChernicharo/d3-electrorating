@@ -1,5 +1,3 @@
-console.log('Hello Electrorating');
-
 window.addEventListener('resize', () => {
 	setDims();
 	update();
@@ -10,8 +8,9 @@ let chartData,
 	indicatorByCountryObj,
 	hierarchyObj,
 	hierarchy,
-	hierarchyArrs = HIERARCHY_ARRS,
-	colors = COLORS,
+	// hierarchyArrs = HIERARCHY_ARRS,
+	// colors = COLORS,
+	idsMap,
 	selectedYear = 2014,
 	selectedIndicator = 'CLIENTES',
 	selectedCountries = {},
@@ -45,7 +44,7 @@ $('select#indicator').on('change', changeIndicator);
 function legendClick(d, i) {
 	// console.log({ d, i });
 	selectedCountries[d] = !selectedCountries[d];
-	console.log({ selectedCountries });
+	// console.log({ selectedCountries });
 	$(`.${d.split(' ').join('-')}.legend-container`).toggleClass('inactive');
 
 	wrangleData();
@@ -88,11 +87,11 @@ function changeIndicator(e) {
 }
 
 function setDims() {
-	margins = { top: 100, left: window.innerWidth / 20 };
+	margins = { top: 110, left: window.innerWidth / 20 };
 	width = window.innerWidth - margins.left * 2;
 	height = window.innerHeight - margins.top * 2;
 
-	console.log({ height, width, left: margins.left, top: margins.top });
+	// console.log({ height, width, left: margins.left, top: margins.top });
 }
 function formatNum(x) {
 	if (x === 0) return 0;
@@ -161,6 +160,7 @@ function wrangleData() {
 			id: item.company,
 			value: item.value,
 			parent: item.country,
+			key: item.id,
 		})),
 	};
 
@@ -169,29 +169,23 @@ function wrangleData() {
 		.concat(hierarchyObj.parents)
 		.concat(hierarchyObj.companies);
 
-	console.log({
-		// formatedData,
-		// countryByIndicatorObj,
-		// indicatorByCountryObj,
-		// indicatorsByYear,
-		// chartData,
-		reducedCountriesValues,
-		companieValuesSum,
-		hierarchy,
-		// 	currCountries,
-		// countriesEntries,
-	});
-	// console.log('==============================');
+	idsMap = d3
+		.nest()
+		.key(d => d.id)
+		.rollup(d => d[0])
+		.object(chartData);
+
+	// console.log(idsMap);
 }
 // prettier-ignore
 (async function init() {
 	setDims();
 
-	const rawData = await d3.dsv(';', 'electrorating_indicadores_no_financieros.csv');
+	const rawData = await d3.dsv(';', './data/electrorating_indicadores_no_financieros_v2.csv');
 
 	const formatedData = rawData
 		.map(item => ({
-			id: Number(item[' ']),
+			id: Number(item['FACT_INDICATOR_Key']),
 			year: Number(item['TIME_Year']),
 			indicator: item['INDICATOR_Name'],
 			country: item['UTILITY_Country'],
@@ -262,16 +256,16 @@ function wrangleData() {
 	treemap = (width, height) =>
 		d3.treemap().size([width, height]).paddingOuter(1).paddingInner(1);
 
-	console.log({
-		rawData,
-		allCountries,
-		selectedCountries,
-		allIndicators,
-		allCompanies,
-		formatedData,
-		countryByIndicatorObj,
-		indicatorByCountryObj,
-	});
+	// console.log({
+	// 	rawData,
+	// 	allCountries,
+	// 	selectedCountries,
+	// 	allIndicators,
+	// 	allCompanies,
+	// 	formatedData,
+	// 	countryByIndicatorObj,
+	// 	indicatorByCountryObj,
+	// });
 
 	wrangleData();
 	update();
@@ -347,7 +341,10 @@ function update() {
 			return `var(--${d.parent.id.split(' ').join('-')})`;
 		});
 
-	// ------------------ LEGENDS ------------------ //
+	// ------------------ TOOLTIP ------------------ //
+
+	d3.select('g').selectAll('.node').on('mousemove', showTooltip);
+	d3.select('g').selectAll('.node').on('mouseout', hideTooltip);
 
 	// -------------------- DOM CHANGES ---------------------- //
 
@@ -370,6 +367,32 @@ function update() {
 			currCountries.filter(country => selectedCountries[country]).length
 		}`
 	);
-	console.log({ currCountries, selectedCountries });
+	// console.log({ currCountries, selectedCountries });
 	$('#total-info').text(`Valor Acumulado: ${formatNum(companieValuesSum)}`);
+}
+
+function showTooltip(d, i, e) {
+	const { offsetX: x, offsetY: y } = d3.event;
+	const isLeft = x < width / 2;
+	// prettier-ignore
+	const { width: tipWidth, height: tipHeight } = document.querySelector('#tooltip').getBoundingClientRect();
+
+	$('#tooltip').css({
+		opacity: 0.86,
+		top: y + tipHeight * 1.5,
+		left: isLeft ? x + tipWidth * 0.25 : 'unset',
+		right: isLeft ? 'unset' : width - x + tipWidth * 0.25,
+	});
+
+	$('.row.country').html(
+		`<div style="width: 12px; height:12px; border-radius: 6px; margin-right: .25rem; 
+			background: var(--${idsMap[d.data.key].country.split(' ').join('-')});"></div> 
+			${idsMap[d.data.key].company} - ${idsMap[d.data.key].country}`
+	);
+	// prettier-ignore
+	$('.row.indicator').text(`${idsMap[d.data.key].indicator}: ${formatNum(idsMap[d.data.key].value)}`)
+}
+
+function hideTooltip(d, i, e) {
+	$('#tooltip').css({ opacity: 0, pointerEvents: 'none' });
 }
