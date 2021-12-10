@@ -19,9 +19,6 @@
 	--REPUBLICA-DOMINICANA: #ffd623;
 	--GUATEMALA: salmon;
 }
-html {
-	overflow-x: hidden;
-}
 
 body {
 	margin: 0;
@@ -46,18 +43,12 @@ p,
 label {
 	font-size: min(2.8vmin, 14px);
 }
-p {
-	margin: 0.5rem 1rem 0.5rem 0;
-}
 
-p.heading {
-	padding-left: 2rem;
-	text-align: center;
-	margin-bottom: -2px;
-}
 button {
 	padding: 0.5rem;
 	height: fit-content;
+	background: transparent;
+	border: none;
 }
 
 button,
@@ -70,6 +61,24 @@ button:hover {
 button:hover > i {
 	color: #003eff;
 }
+header {
+	/* border: 1px solid #cdcdcd; */
+	display: flex;
+}
+
+header p.heading {
+	margin: 0.5rem 1rem 0.5rem 0;
+	width: 100%;
+	padding-left: 2rem;
+	text-align: center;
+}
+
+button.back-btn {
+	position: absolute;
+	right: 0;
+	background: transparent;
+	border: none;
+}
 
 section.menu {
 	/* border-top: 1px solid #efefef; */
@@ -81,35 +90,28 @@ section.menu {
 	box-shadow: 0px 6px 10px -6px #cdcdcd;
 }
 
-.left-menu {
+div.left-menu {
 	padding-bottom: 0.1rem;
 }
 
 .select-box {
-	/* border: 1px solid #efefef; */
 	display: flex;
 	flex-direction: column;
 	justify-content: end;
-	/* width: min(25vmin, 220px); */
-	/* height: min(8vmin, 36px); */
 	margin-right: 1rem;
 }
 
-.play-btns-box {
-	/* border: 1px solid; */
+div.play-btns-box {
 	width: 100%;
 	display: flex;
-	justify-content: end;
-	padding-top: 0.5rem;
-	padding-right: 0.5rem;
+	justify-content: center;
 }
 
 #slider-div {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	padding: 0 0.5rem 0.25rem;
-	/* padding-inline: 0.5rem; */
+	padding: 0 0rem 0.25rem 0.5rem;
 }
 
 h1#year-display {
@@ -119,18 +121,21 @@ h1#year-display {
 }
 
 #year-slider {
-	width: min(25vmin, 220px);
+	width: min(28vmin, 320px);
 }
 
 #text-box {
-	/* border-bottom: 1px solid #efefef; */
 	width: calc(100vw - 4rem);
 	display: flex;
 	justify-content: end;
 	padding-inline: 2rem;
 }
 
-#countries-legends {
+#text-box p:not(:last-child) {
+	margin-right: 0.5rem;
+}
+
+div#countries-legends {
 	border: 1px solid #efefef;
 	display: flex;
 	justify-content: center;
@@ -138,13 +143,9 @@ h1#year-display {
 	max-height: 43px;
 	overflow-y: auto;
 	padding: 0.5rem 0 0.5rem;
-	/* padding: 0.5rem 0.5rem 0.25rem 1.75rem; */
-	/* padding: 0.5rem 1.75rem 0.25rem; */
 }
 
 .legend-container {
-	/* border: 1px solid #efefef; */
-
 	display: flex;
 	flex-direction: row-reverse;
 	align-items: center;
@@ -168,7 +169,7 @@ h1#year-display {
 	background-color: #efefef !important;
 }
 
-.container {
+div.container {
 	display: flex;
 	justify-content: center;
 }
@@ -177,7 +178,6 @@ h1#year-display {
 }
 
 svg {
-	/* border: 1px solid #efefef; */
 	background: #efefef;
 }
 
@@ -187,7 +187,6 @@ svg {
 	overflow: hidden;
 }
 .text-div {
-	/* border: 1px solid blue; */
 	overflow: hidden;
 	white-space: pre-wrap;
 	position: absolute;

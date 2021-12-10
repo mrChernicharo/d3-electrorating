@@ -6,64 +6,37 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Electrorating</title>
 
-		<link rel="stylesheet" href="style.css" />
+		<link rel="stylesheet" href="index.css" />
 		<link
 			rel="stylesheet"
 			href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"
 		/>
 	</head>
 	<body>
-		<p class="heading">
-			ELECTRORATING - <strong>Datos No Financieros</strong>
-		</p>
-		<section class="menu">
-			<div class="left-menu">
-				<div class="select-box">
-					<!-- INDICATOR SELECT -->
-					<label for="indicator">Indicador</label>
-					<select name="indicator" id="indicator"></select>
-				</div>
+		<h1>ELECTRORATING</h1>
+
+		<main>
+			<div class="link-container">
+				<a href="financieros.html">
+					<div>
+						<i class="fa fa-money fa-10x" aria-hidden="true"></i>
+						<span>Base de Datos Financieros</span>
+					</div>
+				</a>
 			</div>
-			<!-- PLAY/PAUSE/RESET BUTTONS -->
-			<div class="play-btns-box">
-				<button id="reset">
-					<i class="fas fa-fast-backward"></i>
-				</button>
-				<button id="play"><i class="fas fa-play"></i></button>
-				<button id="pause" hidden>
-					<i class="fas fa-pause"></i>
-				</button>
+
+			<div class="link-container">
+				<a href="no-financieros.html">
+					<div>
+						<i
+							class="fas fa-database fa-10x"
+							aria-hidden="true"
+						></i>
+						<span>Base de Datos No Financieros</span>
+					</div>
+				</a>
 			</div>
-			<!-- YEAR SLIDER -->
-			<div id="slider-div">
-				<h1 id="year-display"></h1>
-				<div id="year-slider"></div>
-			</div>
-		</section>
-
-		<!-- COUNTRIES LEGENDS -->
-		<div id="countries-legends"></div>
-
-		<!-- TEXT STATS -->
-		<div id="text-box">
-			<p id="companies-info"></p>
-			<p id="countries-info"></p>
-			<p id="total-info"></p>
-		</div>
-
-		<!-- CHART AREA -->
-		<div class="container">
-			<div id="chart-area">
-				<svg id="svg"></svg>
-			</div>
-		</div>
-
-		<div id="tooltip">
-			<div class="row company"></div>
-			<div class="row country"></div>
-			<div class="row indicator"></div>
-		</div>
-
+		</main>
 		<!-- prettier-ignore -->
 		<script src="https://kit.fontawesome.com/183de1fcbf.js" crossorigin="anonymous"></script>
 		<script
